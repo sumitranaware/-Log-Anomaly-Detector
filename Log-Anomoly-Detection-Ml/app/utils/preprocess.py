@@ -20,7 +20,6 @@ class Preprocessor:
                 "level": log.level.value,
                 "message": log.message
             })
-
         df = pd.DataFrame(rows)
         df["timestamp"] = pd.to_datetime(df["timestamp"], errors="coerce")
         df["timestamp"] = df["timestamp"].astype(np.int64) // 10**9
