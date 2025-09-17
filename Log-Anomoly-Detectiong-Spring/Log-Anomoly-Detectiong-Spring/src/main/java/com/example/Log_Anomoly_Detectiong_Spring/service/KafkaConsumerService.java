@@ -15,10 +15,10 @@ import java.time.Instant;
 @RequiredArgsConstructor
 public class KafkaConsumerService {
 
-    private final MLClient anomalyDetectionClient;
+   // private final MLClient anomalyDetectionClient;
     private final LogRepository logRepository;
     private final AnomalyService anomalyService;
-
+    private final AnomalyDetectionClient anomalyDetectionClient;
     @KafkaListener(topics = "${app.kafka.logs-topic:logs-topic}", groupId = "log-anomaly-group")
     public void consume(String message) {
         log.info("Received Kafka message: {}", message);

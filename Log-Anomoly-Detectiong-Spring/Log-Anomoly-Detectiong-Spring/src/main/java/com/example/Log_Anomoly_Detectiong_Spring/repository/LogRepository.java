@@ -9,4 +9,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface LogRepository extends JpaRepository<LogEntry,Long> {
     Page<LogEntry> findAllByServiceNameIgnoreCase(String serviceName, Pageable pageable);
+
+    Page<LogEntry> findAllByAnomalousTrue(Pageable pageable);
 }

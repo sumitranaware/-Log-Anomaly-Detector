@@ -1,14 +1,17 @@
 package com.example.Log_Anomoly_Detectiong_Spring.controller;
 
+import com.example.Log_Anomoly_Detectiong_Spring.dto.AnomalyDetectionResponse;
 import com.example.Log_Anomoly_Detectiong_Spring.dto.LogRequest;
 import com.example.Log_Anomoly_Detectiong_Spring.entity.Anomaly;
 import com.example.Log_Anomoly_Detectiong_Spring.entity.LogEntry;
 import com.example.Log_Anomoly_Detectiong_Spring.repository.AnomalyRepository;
+import com.example.Log_Anomoly_Detectiong_Spring.repository.LogRepository;
 import com.example.Log_Anomoly_Detectiong_Spring.service.AnomalyService;
 import com.example.Log_Anomoly_Detectiong_Spring.service.LogService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -20,11 +23,13 @@ public class LogController {
     private final LogService logService;
     private final AnomalyService anomalyService;
     private final AnomalyRepository anomalyRepository;
+    private final LogRepository logRepository;
 
-    public LogController(LogService logService, AnomalyService anomalyService, AnomalyRepository anomalyRepository) {
+    public LogController(LogService logService, AnomalyService anomalyService, AnomalyRepository anomalyRepository, LogRepository logRepository) {
         this.logService = logService;
         this.anomalyService = anomalyService;
         this.anomalyRepository = anomalyRepository;
+        this.logRepository = logRepository;
     }
 
     @PostMapping("/logs")
@@ -59,4 +64,10 @@ public class LogController {
     public String health(){
         return "ok";
     }
+
+//    @GetMapping("/logs/anomalies/live")
+//    public Page<LogEntry> getLiveAnomalies(Pageable pageable) {
+//        return logRepository.findAllByAnomalousTrue(pageable);
+//    }
+
 }

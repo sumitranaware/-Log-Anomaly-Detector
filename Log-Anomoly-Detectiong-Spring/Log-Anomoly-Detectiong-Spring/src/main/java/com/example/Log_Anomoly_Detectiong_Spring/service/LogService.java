@@ -83,4 +83,41 @@ public class LogService {
         }
         return repository.findAllByServiceNameIgnoreCase(serviceName, pageable);
     }
+
+
+
+    public LogEntry processIncomingLog(LogEntry entry) {
+        AnomalyDto anomalyRequest = new AnomalyDto();
+        anomalyRequest.setServiceName(entry.getServiceName());
+        anomalyRequest.setLevel(entry.getLogLevel());
+        anomalyRequest.setMessage(entry.getMessage());
+        anomalyRequest.setTimestamp(entry.getTimestamp().toString());
+        anomalyRequest.setFeatures(LogFeatureExtractor.extractFeatures(entry));
+
+        try {
+            DetectResultDto detectResult = webClient.post()
+                    .uri("/detect")
+                    .bodyValue(List.of(anomalyRequest))
+                    .retrieve()
+                    .bodyToMono(DetectResultDto.class)
+                    .block();
+
+            if (detectResult != null && !detectResult.getAnomalies().isEmpty()) {
+                AnomalyDto anomaly = detectResult.getAnomalies().get(0);
+
+                entry.setAnomalous(anomaly.isAnomaly());
+                entry.setAnomalyScore(anomaly.getScore());
+                entry.setAnomalyReason(
+                        anomaly.isAnomaly() ? "IsolationForest anomaly detected" : null
+                );
+            }
+        } catch (Exception e) {
+            entry.setAnomalous(false);
+            entry.setAnomalyReason("Detection service unavailable: " + e.getMessage());
+        }
+
+        LogEntry saved = repository.save(entry);
+        producerService.publish(saved);
+        return saved;
+    }
 }

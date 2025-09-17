@@ -1,6 +1,7 @@
 package com.example.Log_Anomoly_Detectiong_Spring.entity;
 
 import com.example.Log_Anomoly_Detectiong_Spring.utility.FlexibleTimeDeserializer;
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -17,11 +18,15 @@ public class LogEntry {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Lob
+    @Column(columnDefinition = "TEXT")
     private String serviceName;
 
     @Column(name = "log_level")
+    @JsonAlias("level")
     private String logLevel;
 
+    @Lob
     @Column(columnDefinition = "TEXT")
     private String message;
 

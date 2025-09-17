@@ -91,6 +91,7 @@ def detect(entries: List[LogEntry]):
 
         return DetectResult(count=len(anomalies), anomalies=anomalies)
 
+
     except Exception as exc:
         traceback.print_exc()
         raise HTTPException(500, detail=str(exc))

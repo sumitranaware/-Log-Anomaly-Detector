@@ -1,17 +1,18 @@
 package com.example.Log_Anomoly_Detectiong_Spring.utility;
 
 import com.example.Log_Anomoly_Detectiong_Spring.dto.LogRequest;
+import com.example.Log_Anomoly_Detectiong_Spring.entity.LogEntry;
 
 import java.time.Instant;
 import java.util.*;
 
 public class LogFeatureExtractor {
 
-    // Keep track of last log timestamps per service
+
     private static final Map<String, Instant> lastLogTime = new HashMap<>();
-    // Keep track of consecutive high-level logs per service
+
     private static final Map<String, Integer> consecutiveHighLevel = new HashMap<>();
-    // Rare services (for example)
+
     private static final Set<String> rareServices = new HashSet<>(Arrays.asList("NotificationService", "CacheService"));
 
     private static final List<String> errorKeywords = Arrays.asList("error", "fail", "exception", "crash");
@@ -106,5 +107,14 @@ public class LogFeatureExtractor {
         if (s.isEmpty()) return 0.0;
         long specialCount = s.chars().filter(c -> !Character.isLetterOrDigit(c) && !Character.isWhitespace(c)).count();
         return (double) specialCount / s.length();
+    }
+    public static Map<String, Object> extractFeatures(LogEntry entry) {
+        // reuse fields from LogEntry
+        LogRequest req = new LogRequest();
+        req.setServiceName(entry.getServiceName());
+        req.setLogLevel(entry.getLogLevel());
+        req.setMessage(entry.getMessage());
+        req.setTimestamp(entry.getTimestamp());
+        return extractFeatures(req);
     }
 }
